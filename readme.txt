@@ -1,77 +1,110 @@
-=== OOSOFT 2FA Security ===
+=== OOSOFT WAF Security ===
 Contributors: oosofttech
-Tags: two-factor authentication, 2fa, totp, otp, security
-Requires at least: 6.0
+Donate link: https://oosoft.co.in
+Tags: security, firewall, waf, malware, brute-force
+Requires at least: 5.9
 Tested up to: 6.7
-Stable tag: 1.0.2
-Requires PHP: 8.0
+Requires PHP: 7.4
+Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enterprise-grade Two-Factor Authentication for WordPress with TOTP, Email OTP, backup codes, and role-based enforcement.
+A production-ready WordPress application-level Web Application Firewall (WAF) with request filtering, upload malware protection, and security logging.
 
 == Description ==
 
-OOSOFT 2FA Security adds robust two-factor authentication to your WordPress site. Protect every login with a second verification step using a TOTP authenticator app (Google Authenticator, Authy, etc.) or a one-time code sent to your email address.
+OOSOFT WAF Security is a comprehensive WordPress security plugin that acts as an application-level Web Application Firewall. It protects your site in real-time by filtering malicious requests, scanning uploads for malware, and maintaining detailed security logs.
 
-**Key Features:**
+= Free Features =
 
-* **TOTP Authenticator App** — compatible with Google Authenticator, Authy, Microsoft Authenticator, and any RFC 6238-compliant app.
-* **Email OTP** — sends a time-limited one-time code to the user's registered email address.
-* **Backup Codes** — generate single-use recovery codes so users are never locked out.
-* **Role-Based Enforcement** — require 2FA for specific roles (e.g. administrators) while leaving it optional for others.
-* **Rate Limiting** — brute-force protection with configurable attempt limits and lockout periods.
-* **Security Logs** — detailed event logging with filterable admin view and automatic pruning.
-* **Encrypted Secret Storage** — TOTP secrets are encrypted at rest using libsodium (preferred) or AES-256-GCM/CBC via OpenSSL.
-* **HKDF Key Derivation** — encryption keys are derived from your WordPress secret keys; no raw key material is stored.
+**Request Firewall**
+
+* SQL injection pattern detection and blocking
+* Cross-site scripting (XSS) pattern detection and blocking
+* Dangerous user-agent blocking (scanners, exploit tools)
+* XML-RPC endpoint protection
+* Brute-force login rate limiting
+
+**Upload Malware Protection**
+
+* Block uploads with dangerous file extensions (PHP, ASP, shell scripts, etc.)
+* Detect and block double-extension attacks (e.g., file.jpg.php)
+* Basic malware signature scanning of file contents
+* Admin email notification on blocked uploads
+* Full audit trail for upload attempts
+
+**Security Logging**
+
+* Detailed log of every blocked attack
+* Detailed log of every blocked upload attempt
+* IP address, user agent, request URI, and attack payload recorded
+* Configurable log retention period
+* Dashboard view of recent security events
+
+= Pro Features (Coming Soon) =
+
+* Imunify360 integration for advanced scanning
+* Auto-detect scanning engine (built-in, Imunify360, or automatic)
+* Quarantine suspicious uploads
+* Temporary automatic IP bans
+* Custom malware signature rules
+
+= About OOSOFT Technology =
+
+OOSOFT Technology specialises in WordPress security solutions. Visit [https://oosoft.co.in](https://oosoft.co.in) to learn more.
 
 == Installation ==
 
-1. Upload the `oosoft-2fa-security` folder to the `/wp-content/plugins/` directory.
+1. Upload the `oosoft-waf-security` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the **Plugins** menu in WordPress.
-3. Go to **Settings > 2FA Security** to configure enforcement rules and options.
-4. Users can set up their preferred 2FA method from their **Profile** page.
+3. Navigate to **WAF Security** in the WordPress admin menu to configure your settings.
+4. Review the dashboard to confirm all protection modules are active.
 
 == Frequently Asked Questions ==
 
-= Which authenticator apps are supported? =
+= Will this plugin slow down my site? =
 
-Any app that supports the TOTP standard (RFC 6238), including Google Authenticator, Authy, Microsoft Authenticator, and 1Password.
+No. The WAF runs lightweight pattern matching on incoming requests. The performance overhead is negligible on any modern server.
 
-= What happens if a user loses their authenticator app? =
+= Will XML-RPC protection break the WordPress mobile app? =
 
-Users can log in with one of their backup codes. Administrators can also disable 2FA for a user from the Users list.
+Yes. If you use the official WordPress mobile app or services that rely on XML-RPC (such as Jetpack), leave XML-RPC protection disabled. Only enable it if you do not use any XML-RPC-dependent services.
 
-= Is TOTP secret storage secure? =
+= Can I whitelist my own IP address? =
 
-Yes. Secrets are encrypted with AES-256 (libsodium secretbox preferred, OpenSSL AES-256-GCM/CBC as fallback) before being stored in the database. Encryption keys are derived from your site's unique WordPress secret keys via HKDF-SHA256.
+IP whitelisting is planned for a future release. Currently, all requests are subject to the same firewall rules.
 
-= Does this plugin work with WooCommerce or custom login forms? =
+= What file extensions are blocked by the upload scanner? =
 
-The plugin intercepts WordPress's core authentication pipeline, so it works with any theme or plugin that uses `wp_signon()` or the standard login form.
+The scanner blocks server-executable extensions including PHP variants (php, php3, php4, php5, php7, php8, phtml, pht, phar), ASP variants, shell scripts (sh, bash, csh), CGI scripts (cgi, pl, py, rb), and compiled executables (exe, dll, bat, cmd). Standard image, document, and media files are unaffected.
+
+= How do I report a security vulnerability in this plugin? =
+
+Please report security issues responsibly by emailing the author via https://oosoft.co.in. Do not open a public issue.
+
+= Is this plugin compatible with multisite? =
+
+Single-site operation is fully supported. Multisite compatibility is planned for a future release.
 
 == Screenshots ==
 
-1. Two-factor authentication challenge screen shown after password login.
-2. User profile section for managing 2FA methods and backup codes.
-3. Admin settings page with role enforcement and rate limiting configuration.
-4. Admin security logs page.
+1. Dashboard overview showing real-time protection status and attack statistics.
+2. Settings page with firewall, upload scanner, and logging configuration.
+3. Security logs table with detailed attack information.
 
 == Changelog ==
 
-= 1.0.2 =
-* Improved escaping and security hardening throughout.
-* Removed deprecated load_plugin_textdomain() call (WordPress 4.6+ auto-loads translations).
-* Added HKDF key derivation fallback warning when WordPress secret keys are not configured.
-
-= 1.0.1 =
-* Fixed QR code scanning compatibility with major authenticator apps.
-* Switched to proven qrcodejs library for QR generation.
-
 = 1.0.0 =
 * Initial release.
+* Request firewall with SQL injection, XSS, and bad user-agent blocking.
+* XML-RPC protection toggle.
+* Brute-force login rate limiting.
+* Upload malware scanner with extension and signature checks.
+* Security logging with configurable retention.
+* Admin dashboard with attack statistics.
+* Pro feature architecture (gated, not yet activated).
 
 == Upgrade Notice ==
 
-= 1.0.2 =
-Security hardening release. Update recommended for all users.
+= 1.0.0 =
+Initial release. No upgrade action required.

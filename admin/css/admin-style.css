@@ -1,0 +1,128 @@
+/* OOSOFT WAF Security – Admin Styles */
+
+.oosoft-waf-wrap {
+	max-width: 1200px;
+}
+
+/* ── Status pills ──────────────────────────────────────────────────────── */
+.oosoft-waf-status-bar {
+	margin: 16px 0 24px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.oosoft-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.oosoft-pill-on {
+	background: #d7f3e0;
+	color: #1a6b35;
+	border: 1px solid #7bcf9f;
+}
+
+.oosoft-pill-off {
+	background: #fde8e8;
+	color: #8b1a1a;
+	border: 1px solid #f5a5a5;
+}
+
+/* ── Stat cards ────────────────────────────────────────────────────────── */
+.oosoft-waf-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin: 12px 0 24px;
+}
+
+.oosoft-stat-card {
+	background: #ffffff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px 28px;
+	min-width: 150px;
+	text-align: center;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+}
+
+.oosoft-stat-number {
+	display: block;
+	font-size: 2.4em;
+	font-weight: 700;
+	color: #d63638;
+	line-height: 1.1;
+	margin-bottom: 4px;
+}
+
+.oosoft-stat-label {
+	display: block;
+	font-size: 12px;
+	color: #646970;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+/* ── Logs table ────────────────────────────────────────────────────────── */
+.oosoft-logs-table code {
+	font-size: 12px;
+	word-break: break-all;
+}
+
+.oosoft-logs-table th,
+.oosoft-logs-table td {
+	vertical-align: top;
+}
+
+/* ── Pro badge ─────────────────────────────────────────────────────────── */
+.oosoft-pro-badge {
+	display: inline-block;
+	background: #f0c90f;
+	color: #1d2327;
+	padding: 2px 7px;
+	border-radius: 3px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	vertical-align: middle;
+	text-transform: uppercase;
+}
+
+.oosoft-pro-section p {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+/* ── Pro upgrade notice ────────────────────────────────────────────────── */
+.oosoft-waf-pro-notice {
+	margin-top: 32px;
+	padding: 16px 20px;
+	background: #fff8e5;
+	border-left: 4px solid #f0c90f;
+	border-radius: 0 4px 4px 0;
+}
+
+.oosoft-waf-pro-notice h2 {
+	margin-top: 0;
+}
+
+/* ── Pagination ────────────────────────────────────────────────────────── */
+.tablenav-pages {
+	margin: 12px 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.paging-input {
+	font-size: 13px;
+	color: #646970;
+}
