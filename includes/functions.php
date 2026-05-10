@@ -34,19 +34,39 @@ function oosoft_license_allows( $feature ) {
  * @return string Validated IP or empty string on failure.
  */
 function oosoft_waf_get_client_ip() {
-	$candidate = '';
+	$remote = isset( $_SERVER['REMOTE_ADDR'] )
+		? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) )
+		: '';
 
-	if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
-		$candidate = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
-	} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-		$forwarded = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
-		$parts     = explode( ',', $forwarded );
-		$candidate = trim( $parts[0] );
-	} elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
-		$candidate = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+	/**
+	 * Filters the list of trusted proxy IP addresses.
+	 *
+	 * Proxy headers (CF-Connecting-IP, X-Forwarded-For) are only honoured
+	 * when REMOTE_ADDR matches an IP in this list. Leave empty (default) to
+	 * always use REMOTE_ADDR directly.
+	 *
+	 * @param string[] $proxies List of trusted proxy IP addresses.
+	 */
+	$trusted_proxies = apply_filters( 'oosoft_waf_trusted_proxies', array() );
+
+	if ( ! empty( $trusted_proxies ) && in_array( $remote, (array) $trusted_proxies, true ) ) {
+		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+			$candidate = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
+			if ( filter_var( $candidate, FILTER_VALIDATE_IP ) ) {
+				return $candidate;
+			}
+		}
+
+		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$parts     = explode( ',', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) );
+			$candidate = trim( $parts[0] );
+			if ( filter_var( $candidate, FILTER_VALIDATE_IP ) ) {
+				return $candidate;
+			}
+		}
 	}
 
-	return filter_var( $candidate, FILTER_VALIDATE_IP ) ? $candidate : '';
+	return filter_var( $remote, FILTER_VALIDATE_IP ) ? $remote : '';
 }
 
 /**

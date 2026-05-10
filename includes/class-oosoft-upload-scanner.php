@@ -182,6 +182,15 @@ class OOSOFT_Upload_Scanner {
 		}
 
 		$content = $this->read_file_head( $tmp, 51200 );
+
+		if ( false === $content ) {
+			// WP_Filesystem unavailable — fail closed to prevent unscanned uploads.
+			$name          = isset( $file['name'] ) ? sanitize_file_name( $file['name'] ) : '';
+			OOSOFT_Logger::log( 'upload', 'scan_error', 'WP_Filesystem unavailable for: ' . $name );
+			$file['error'] = __( 'Upload blocked: the file could not be scanned for malware. Please try again or contact the site administrator.', 'oosoft-waf-security' );
+			return $file;
+		}
+
 		if ( '' === $content ) {
 			return $file;
 		}
@@ -218,13 +227,13 @@ class OOSOFT_Upload_Scanner {
 		}
 
 		if ( ! ( $wp_filesystem instanceof WP_Filesystem_Base ) ) {
-			return '';
+			return false;
 		}
 
 		$content = $wp_filesystem->get_contents( $path );
 
 		if ( false === $content ) {
-			return '';
+			return false;
 		}
 
 		return substr( $content, 0, $bytes );

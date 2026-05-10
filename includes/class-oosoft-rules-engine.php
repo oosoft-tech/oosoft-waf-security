@@ -177,8 +177,6 @@ class OOSOFT_Rules_Engine {
 				__( 'Too many login attempts. Please wait a few minutes before trying again.', 'oosoft-waf-security' )
 			);
 		}
-
-		set_transient( $transient, $attempts + 1, $window_secs );
 	}
 
 	/**
@@ -210,21 +208,11 @@ class OOSOFT_Rules_Engine {
 		$xss_enabled = get_option( 'oosoft_waf_enable_xss_protection', '1' );
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
-		$sources = array(
-			'get'  => $_GET,
-			'post' => $_POST,
-		);
+		$sources = array( $_GET, $_POST );
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
 
 		foreach ( $sources as $source ) {
-			if ( ! is_array( $source ) ) {
-				continue;
-			}
-
-			foreach ( $source as $value ) {
-				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-				$raw = wp_unslash( (string) $value );
-
+			foreach ( $this->flatten( $source ) as $raw ) {
 				if ( $sql_enabled && $this->matches_any( $raw, $this->sql_patterns ) ) {
 					OOSOFT_Logger::log( 'attack', 'sql_injection', substr( $raw, 0, 200 ) );
 					oosoft_waf_block_request(
@@ -240,6 +228,30 @@ class OOSOFT_Rules_Engine {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Recursively collects all scalar string leaves from a nested array.
+	 *
+	 * Ensures that payloads nested inside array-type parameters
+	 * (e.g. ?q[]=<script>) are not silently skipped by the pattern checks.
+	 *
+	 * @param mixed $data Raw superglobal value or a nested array thereof.
+	 * @return string[]
+	 */
+	private function flatten( $data ) {
+		$results = array();
+		if ( is_array( $data ) ) {
+			foreach ( $data as $item ) {
+				foreach ( $this->flatten( $item ) as $leaf ) {
+					$results[] = $leaf;
+				}
+			}
+		} else {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$results[] = wp_unslash( (string) $data );
+		}
+		return $results;
 	}
 
 	/**
