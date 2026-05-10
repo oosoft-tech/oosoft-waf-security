@@ -91,12 +91,6 @@ function oosoft_waf_set_default_options() {
  * Loads the plugin text domain and initialises all modules.
  */
 function oosoft_waf_init() {
-	load_plugin_textdomain(
-		'oosoft-waf-security',
-		false,
-		dirname( plugin_basename( OOSOFT_WAF_PLUGIN_FILE ) ) . '/languages'
-	);
-
 	OOSOFT_WAF_Core::get_instance();
 
 	if ( is_admin() ) {
